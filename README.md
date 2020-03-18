@@ -36,3 +36,5 @@ Code and associated documentation are distributed with a [CC-BY 4.0](https://cre
 Domenici, P (2010) Escape Responses in fish: kinematics, performance, and behavior. In: Domenici P, B Kapoor (Eds) Fish Locomotion: An Eco-Ethological Perspective. CRC Press, Enfield. ISBN: 9781439843123
 
 Tobias, V. Simulated Fishing to Untangle Catchability and Availability in Fish Abundance Monitoring. Preprints 2020, 2020020177 (doi: 10.20944/preprints202002.0177.v1).
+
+
