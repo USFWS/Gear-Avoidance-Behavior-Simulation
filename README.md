@@ -17,14 +17,16 @@ These are visual representations of the ideas on which the code is based.
 
 ### Behavior Model
 The underlying model of fish behavior was based on a model of predator response behavior (Domenici 2010).
-<img src="/images/PredAvoidModel.png" alt="Predator Avoidance Model"/>
+<img src="/images/PredAvoidModel.png" alt="Predator Avoidance Model" width = "500"/>
 
 ### Fish Model
+<img src="/images/FishModel.png" alt="Fish Model" width = "500"/>
 
 ### Tow Model
+<img src="/images/TowModel.png" alt="Tow Model" width = "500"/>
 
 ### Calculation Model
-
+<img src="/images/CalculationModel.png" alt="Tow Model" width = "500"/>
 
 ## Disclaimer & Licensing
 Code for this project is provided without guantee as to its accuracy or useability.
