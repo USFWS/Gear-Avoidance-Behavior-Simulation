@@ -17,6 +17,7 @@ These are visual representations of the ideas on which the code is based.
 
 ### Behavior Model
 The underlying model of fish behavior was based on a model of predator response behavior (Domenici 2010).
+<img src="/images/PredAvoidModel.png" alt="Predator Avoidance Model"/>
 
 ### Fish Model
 
