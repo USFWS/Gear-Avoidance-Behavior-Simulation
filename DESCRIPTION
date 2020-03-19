@@ -1,0 +1,24 @@
+Package: gabs
+Type: Package
+Title: Gear Avoidance Behavior Simulation
+Version: 0.1.0
+Authors@R: person("Vanessa", "Tobias", email = "vanessa_tobias@fws.gov",
+    role = c("aut", "cre"))
+Description: This package simulates the escape behavior of fishes during
+    sampling. It is based on a conceptual model of predator avoidance behavior.
+    It relies on input from the user for information such as the size of the
+    sampling gear (net), the speed of the tows, and the swimming capabilities
+    of the fish species of interest. It was developed to evaluate assumptions
+    in sampling for Delta Smelt in surveys conducted by the Interagency Ecological
+    Program's long-term monitoring program, but this package allows extension to
+    other similar gears and additional fish species.
+License: CC-BY 4.0
+Encoding: UTF-8
+LazyData: true
+Imports:
+    CircStats,
+    doBy
+URL: https://github.com/USFWS/Gear-Avoidance-Behavior-Simulation
+BugReports: https://github.com/USFWS/Gear-Avoidance-Behavior-Simulation/issues
+Language: en-US
+RoxygenNote: 7.1.0
