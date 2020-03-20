@@ -4,7 +4,15 @@
 \alias{mkfish}
 \title{Create a dataset of fish information.}
 \usage{
-mkfish(n.pops, n.fish, width.path)
+mkfish(
+  n.pops,
+  n.fish,
+  width.path,
+  mean.angle = 1.32296,
+  sd.angle = 0.5555139,
+  mean.fishvel = 27.6,
+  sd.fishvel = 5.1
+)
 }
 \arguments{
 \item{n.pops}{Numeric. The number of tows to complete (or fish populations to simulate)}
@@ -12,6 +20,14 @@ mkfish(n.pops, n.fish, width.path)
 \item{n.fish}{Numeric. Tumber of fish to place in the path of the gear for each population.}
 
 \item{width.path}{Numeric. The width of the path of the gear (in cm).}
+
+\item{mean.angle}{Numeric. The mean escape angle (radians).}
+
+\item{sd.angle}{Numeric. The standard deviation of the escape angle.}
+
+\item{mean.fishvel}{Numeric. The mean fish swimming velocity (cm/sec).}
+
+\item{sd.fishvel}{Numeric. The standard deviation of fish swimming velocity.}
 }
 \value{
 A data.frame with one row for each fish and columns

@@ -4,12 +4,14 @@
 \alias{escfish}
 \title{Calculates which fish escape the net.}
 \usage{
-escfish(fish, pop)
+escfish(fish, pop, swim.fail = 0.4)
 }
 \arguments{
 \item{fish}{A data.frame of fish information, created by mkfish}
 
 \item{pop}{A data.frame of tow information, created by mktow}
+
+\item{swim.fail}{Numeric [0, 1]. Proportion of fish that fail to swim.}
 }
 \value{
 Returns the original fish data.frame with new columns for

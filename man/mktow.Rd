@@ -4,7 +4,7 @@
 \alias{mktow}
 \title{Creates a dataset of tow information.}
 \usage{
-mktow(n.pops, net.vel, n.fish, secchi)
+mktow(n.pops, net.vel, n.fish, rxn.dist)
 }
 \arguments{
 \item{n.pops}{Numeric. The number of tows to complete (or fish populations to simulate)}
@@ -13,14 +13,14 @@ mktow(n.pops, net.vel, n.fish, secchi)
 
 \item{n.fish}{Numeric. Tumber of fish to place in the path of the gear for each population.}
 
-\item{secchi}{Numeric. A Secchi depth (cm) or the reaction distance of the fish.}
+\item{rxn.dist}{Numeric. The reaction distance of the fish.}
 }
 \value{
 A data.frame with one row for each population or tow. Columns
 n.pops = number of tows to complete (or fish populations to simulate)
 net.vel = velocity for the tows; constant
 n.fish = number of fish to place in the path of the gear
-secchi = secchi depth or reaction distance in cm
+rxn.dist = reaction distance in cm
 }
 \description{
 Creates a dataset of tow information.
