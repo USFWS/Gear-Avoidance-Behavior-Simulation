@@ -2,7 +2,7 @@
 
 # TO DO LIST
 # escfish
-#  * clairify the lables for d.prime, dx & check for propagation to other functions
+#
 
 
 
@@ -48,22 +48,24 @@ escfish <- function(fish, pop, swim.fail = 0.4){
   fish2$angle.prime <- adjustangle(fish2$angle)
 
   # CALCULATE ACTUAL DISTANCE TRAVELED BY FISH:
-  d.prime <- fish2$distance/as.numeric(cos(fish2$angle.prime))
+  # swim.dist was formerly called "dist.prime" because it used angle.prime.
+  swim.dist <- fish2$distance/as.numeric(cos(fish2$angle.prime))
 
   # CALCULATE ESCAPE TIME:
   # When does the fish cross the edge of the path of the net?
   #  t=0 is when the fish sees the net.
   #  esc.time = time (sec) it takes for a fish to swim out of the path of the net
-  esc.time <- d.prime/fish2$fish.vel
+  esc.time <- swim.dist/fish2$fish.vel
 
   # CALCULATE ESCAPE BASED ON RELATIVE DISTANCE INSTEAD OF TIME
   # How far does the fish travel in the X direction (ie in relation to the net)?
-  dx <- fish2$distance*as.numeric(tan(fish2$angle.prime))
+  # esc.dist2net was formerly called "dx"
+  esc.dist2net <- fish2$distance*as.numeric(tan(fish2$angle.prime))
   # fish that swim towards the net go in the negative direction:
-  dx[which(fish2$angle>pi)] <- 0 - dx[which(fish2$angle>pi)]
+  esc.dist2net[which(fish2$angle>pi)] <- 0 - esc.dist2net[which(fish2$angle>pi)]
 
-  # How long does it take the net to travel to where the fish escaped (dx+rxn.dist)?
-  net.time <- (fish2$rxn.dist + fish2$dx)/fish2$net.vel
+  # How long does it take the net to travel to where the fish escaped (esc.dist2net+rxn.dist)?
+  net.time <- (fish2$rxn.dist + fish2$esc.dist2net)/fish2$net.vel
 
   # Does the net get to the fish before the fish gets out? ####
   time.diff <- net.time - fish2$esc.time
@@ -77,7 +79,7 @@ escfish <- function(fish, pop, swim.fail = 0.4){
   fish2$caught <- fish2$caught + rbinom(n = length(fish2$caught), size = 1, prob = swim.fail)
   fish2$caught <- as.numeric(fish2$caught > 0)
   fish2$escaped <- as.numeric(fish2$caught == 0)
-  fish2 <- cbind(fish2, net.time, time.diff, d.prime, dx, esc.time)
+  fish2 <- cbind(fish2, net.time, time.diff, swim.dist, esc.dist2net, esc.time)
 
   return(fish2)
 }

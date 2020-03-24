@@ -13,9 +13,9 @@
 #' vel(100)
 vel<-function(x) {
   x*100/(10.704*720)
-  }
+}
 
-#' Creates a dataset of tow information.
+#' Creates a dataset of simulated tow information.
 #'
 #' @param n.pops Numeric. The number of tows to complete (or fish populations to simulate)
 #' @param net.vel Numeric. The velocity of the gear moving through the water.
