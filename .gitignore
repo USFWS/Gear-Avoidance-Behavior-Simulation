@@ -7,3 +7,5 @@ hex.png
 toy_fish.png
 yellowVblue.png
 *.pptx
+*.docx
+inst/doc
