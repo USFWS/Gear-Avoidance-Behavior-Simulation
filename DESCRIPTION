@@ -11,7 +11,7 @@ Description: This package simulates the escape behavior of fishes during
     of the fish species of interest. It was developed to evaluate assumptions
     in sampling for Delta Smelt in surveys conducted by the Interagency Ecological
     Program's long-term monitoring program, but this package allows extension to
-    other similar gears and additional fish species.
+    other similar gears and additional fish species. This is a work in progress.
 License: CC-BY 4.0
 Encoding: UTF-8
 LazyData: true
@@ -23,6 +23,5 @@ BugReports: https://github.com/USFWS/Gear-Avoidance-Behavior-Simulation/issues
 Language: en-US
 RoxygenNote: 7.1.0
 Suggests: 
-    knitr,
-    rmarkdown
+    knitr
 VignetteBuilder: knitr

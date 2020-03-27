@@ -2,7 +2,7 @@
 % Please edit documentation in R/tows.R
 \name{mktow}
 \alias{mktow}
-\title{Creates a dataset of tow information.}
+\title{Creates a dataset of simulated tow information.}
 \usage{
 mktow(n.pops, net.vel, n.fish, rxn.dist)
 }
@@ -23,5 +23,5 @@ n.fish = number of fish to place in the path of the gear
 rxn.dist = reaction distance in cm
 }
 \description{
-Creates a dataset of tow information.
+Creates a dataset of simulated tow information.
 }
