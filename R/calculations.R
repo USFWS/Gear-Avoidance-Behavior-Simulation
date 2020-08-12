@@ -39,7 +39,8 @@ adjustangle <- function(anglevec){
 #' pop values, fish position, and caught status
 #' @examples
 #' escfish(fish3, tow3)
-escfish <- function(fish, pop, swim.fail = 0.4){
+escfish <- function(fish, pop, swim.fail = 0.4,
+                    width.path, height.path = width.path){
   fish2 <- merge(fish, pop,
                  by = "pop",
                  all.x = TRUE)
@@ -47,39 +48,64 @@ escfish <- function(fish, pop, swim.fail = 0.4){
   #  the line perpendicular to the net boundary, and the net boundary itself
   fish2$angle.prime <- adjustangle(fish2$angle)
 
-  # CALCULATE ACTUAL DISTANCE TRAVELED BY FISH:
-  # swim.dist was formerly called "dist.prime" because it used angle.prime.
-  swim.dist <- fish2$distance/as.numeric(cos(fish2$angle.prime))
+  # CALCULATE ACTUAL HORIZONTAL DISTANCE TRAVELED BY FISH:
+  # swim.dist.horiz was formerly called "dist.prime" because it used angle.prime.
+  fish2$swim.dist.horiz <- fish2$distance/as.numeric(cos(fish2$angle.prime))
+
+  # CALCULATE ACTUAL PITCHED DISTANCE TRAVELED BY THE FISH
+  swim.dist.pitch <- fish2$swim.dist.horiz/as.numeric(cos(abs(fish2$angle.pitch)))
+  dist.vertical <- sqrt((swim.dist.pitch^2) - (fish2$swim.dist.horiz^2))
+  # adjust adjacent leg of the triangle for calculations if the fish
+  #     goes up or down in the water
+  adj.dist <- fish2$height
+  adj.dist[which(fish2$angle.pitch > 0)] <- height.path - fish2$height[which(fish2$angle.pitch > 0)]
+  # adjust escape distance when the fish goes out the top or the bottom
+  #      instead of the side of the net path
+  swim.dist.pitch[which(dist.vertical > adj.dist)] <- adj.dist[which(dist.vertical > adj.dist)]/as.numeric(cos((pi/2) - abs(fish2$angle.pitch[which(dist.vertical > adj.dist)])))
+
+  # rename the final swim distance to fit the rest of the code
+  # !!! Consider making this something the user can select - do they want the horizontal plane
+  #        or do they want the fish to be able to swim up and down?
+  fish2$swim.dist <- swim.dist.pitch
+
 
   # CALCULATE ESCAPE TIME:
   # When does the fish cross the edge of the path of the net?
   #  t=0 is when the fish sees the net.
   #  esc.time = time (sec) it takes for a fish to swim out of the path of the net
-  esc.time <- swim.dist/fish2$fish.vel
+  fish2$esc.time <- fish2$swim.dist/fish2$fish.vel
 
   # CALCULATE ESCAPE BASED ON RELATIVE DISTANCE INSTEAD OF TIME
   # How far does the fish travel in the X direction (ie in relation to the net)?
   # esc.dist2net was formerly called "dx"
-  esc.dist2net <- fish2$distance*as.numeric(tan(fish2$angle.prime))
+  fish2$esc.dist2net <- fish2$distance*as.numeric(tan(fish2$angle.prime))
+  # What if the fish goes out the top or the bottom of the net path?
+  #  The distance the fish travels in the X direction will be shorter.
+  fish2$esc.dist2net[which(dist.vertical > adj.dist)] <- tan((pi/2) - abs(fish2$angle.pitch[which(dist.vertical > adj.dist)])) * fish2$height[which(dist.vertical > adj.dist)]
   # fish that swim towards the net go in the negative direction:
-  esc.dist2net[which(fish2$angle>pi)] <- 0 - esc.dist2net[which(fish2$angle>pi)]
+  fish2$esc.dist2net[which(fish2$angle>pi)] <- 0 - fish2$esc.dist2net[which(fish2$angle>pi)]
 
-  # How long does it take the net to travel to where the fish escaped (esc.dist2net+rxn.dist)?
-  net.time <- (fish2$rxn.dist + fish2$esc.dist2net)/fish2$net.vel
+  # How long does it take the net to travel to where the fish escaped
+  #      (esc.dist2net+rxn.dist)?
+  fish2$net.time <- (fish2$rxn.dist + fish2$esc.dist2net)/fish2$net.vel
 
   # Does the net get to the fish before the fish gets out? ####
-  time.diff <- net.time - fish2$esc.time
-  fish2$caught <- as.numeric(time.diff < 0) # TRUE = caught
+  fish2$time.diff <- fish2$net.time - fish2$esc.time
+  fish2$caught <- as.numeric(fish2$time.diff < 0) # TRUE = caught
 
   #Adjust for swimming failures:
   #  binomial w/ p=0.4 --> 0 if fish swim, 1 if they don't.
   #  if they fail to swim, they get caught (caught)
   #  add catches from swimming failure to catches from slowness
-  #  change that to a binomial: if caught = 1 or 2, it's 1; if caught = 0, it stays a 0.
-  fish2$caught <- fish2$caught + rbinom(n = length(fish2$caught), size = 1, prob = swim.fail)
+  #  change that to a binomial:
+  #     if caught = 1 or 2, it's 1;
+  #     if caught = 0, it stays a 0.
+  fish2$caught <- fish2$caught + rbinom(n = length(fish2$caught),
+                                        size = 1,
+                                        prob = swim.fail)
   fish2$caught <- as.numeric(fish2$caught > 0)
   fish2$escaped <- as.numeric(fish2$caught == 0)
-  fish2 <- cbind(fish2, net.time, time.diff, swim.dist, esc.dist2net, esc.time)
+  # fish2 <- cbind(fish2, time.diff) # I put the vars inside fish2 to start
 
   return(fish2)
 }
