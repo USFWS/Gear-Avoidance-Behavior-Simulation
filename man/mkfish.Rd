@@ -8,6 +8,7 @@ mkfish(
   n.pops,
   n.fish,
   width.path,
+  height.path = width.path,
   mean.angle = 1.32296,
   sd.angle = 0.5555139,
   mean.fishvel = 27.6,

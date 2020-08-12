@@ -4,7 +4,7 @@
 \alias{escfish}
 \title{Calculates which fish escape the net.}
 \usage{
-escfish(fish, pop, swim.fail = 0.4)
+escfish(fish, pop, swim.fail = 0.4, width.path, height.path = width.path)
 }
 \arguments{
 \item{fish}{A data.frame of fish information, created by mkfish}
