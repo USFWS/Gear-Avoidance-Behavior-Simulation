@@ -9,3 +9,7 @@ yellowVblue.png
 *.pptx
 *.docx
 inst/doc
+inits*
+CODA*
+junk.R
+update_documentation.R

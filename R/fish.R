@@ -1,7 +1,8 @@
 # Fish
 
 # TO DO LIST ----------------
-#
+# * update documentation for params - height, height.path
+# * allow user to set parameters for the pitch angle?
 
 
 
@@ -22,7 +23,8 @@
 #' angle = angle in radians
 #' @examples
 #' mkfish(n.pops = 1, n.fish = 100, width.path = 100)
-mkfish <- function(n.pops, n.fish, width.path, height.path = width.path,
+mkfish <- function(n.pops, n.fish,
+                   width.path, height.path = width.path,
                    mean.angle = 1.32296, sd.angle = 0.5555139,
                    mean.fishvel = 27.6, sd.fishvel = 5.1){
   #

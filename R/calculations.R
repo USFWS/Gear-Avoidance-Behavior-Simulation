@@ -30,88 +30,6 @@ adjustangle <- function(anglevec){
 
 
 
-#' Calculates which fish escape the net.
-#'
-#' @param fish A data.frame of fish information, created by mkfish
-#' @param pop A data.frame of tow information, created by mktow
-#' @param swim.fail Numeric [0, 1]. Proportion of fish that fail to swim.
-#' @return Returns the original fish data.frame with new columns for
-#' pop values, fish position, and caught status
-#' @examples
-#' escfish(fish3, tow3)
-escfish <- function(fish, pop, swim.fail = 0.4,
-                    width.path, height.path = width.path){
-  fish2 <- merge(fish, pop,
-                 by = "pop",
-                 all.x = TRUE)
-  # calculate the angle inside the triangle made by the fish's escape path,
-  #  the line perpendicular to the net boundary, and the net boundary itself
-  fish2$angle.prime <- adjustangle(fish2$angle)
-
-  # CALCULATE ACTUAL HORIZONTAL DISTANCE TRAVELED BY FISH:
-  # swim.dist.horiz was formerly called "dist.prime" because it used angle.prime.
-  fish2$swim.dist.horiz <- fish2$distance/as.numeric(cos(fish2$angle.prime))
-
-  # CALCULATE ACTUAL PITCHED DISTANCE TRAVELED BY THE FISH
-  swim.dist.pitch <- fish2$swim.dist.horiz/as.numeric(cos(abs(fish2$angle.pitch)))
-  dist.vertical <- sqrt((swim.dist.pitch^2) - (fish2$swim.dist.horiz^2))
-  # adjust adjacent leg of the triangle for calculations if the fish
-  #     goes up or down in the water
-  adj.dist <- fish2$height
-  adj.dist[which(fish2$angle.pitch > 0)] <- height.path - fish2$height[which(fish2$angle.pitch > 0)]
-  # adjust escape distance when the fish goes out the top or the bottom
-  #      instead of the side of the net path
-  swim.dist.pitch[which(dist.vertical > adj.dist)] <- adj.dist[which(dist.vertical > adj.dist)]/as.numeric(cos((pi/2) - abs(fish2$angle.pitch[which(dist.vertical > adj.dist)])))
-
-  # rename the final swim distance to fit the rest of the code
-  # !!! Consider making this something the user can select - do they want the horizontal plane
-  #        or do they want the fish to be able to swim up and down?
-  fish2$swim.dist <- swim.dist.pitch
-
-
-  # CALCULATE ESCAPE TIME:
-  # When does the fish cross the edge of the path of the net?
-  #  t=0 is when the fish sees the net.
-  #  esc.time = time (sec) it takes for a fish to swim out of the path of the net
-  fish2$esc.time <- fish2$swim.dist/fish2$fish.vel
-
-  # CALCULATE ESCAPE BASED ON RELATIVE DISTANCE INSTEAD OF TIME
-  # How far does the fish travel in the X direction (ie in relation to the net)?
-  # esc.dist2net was formerly called "dx"
-  fish2$esc.dist2net <- fish2$distance*as.numeric(tan(fish2$angle.prime))
-  # What if the fish goes out the top or the bottom of the net path?
-  #  The distance the fish travels in the X direction will be shorter.
-  fish2$esc.dist2net[which(dist.vertical > adj.dist)] <- tan((pi/2) - abs(fish2$angle.pitch[which(dist.vertical > adj.dist)])) * fish2$height[which(dist.vertical > adj.dist)]
-  # fish that swim towards the net go in the negative direction:
-  fish2$esc.dist2net[which(fish2$angle>pi)] <- 0 - fish2$esc.dist2net[which(fish2$angle>pi)]
-
-  # How long does it take the net to travel to where the fish escaped
-  #      (esc.dist2net+rxn.dist)?
-  fish2$net.time <- (fish2$rxn.dist + fish2$esc.dist2net)/fish2$net.vel
-
-  # Does the net get to the fish before the fish gets out? ####
-  fish2$time.diff <- fish2$net.time - fish2$esc.time
-  fish2$caught <- as.numeric(fish2$time.diff < 0) # TRUE = caught
-
-  #Adjust for swimming failures:
-  #  binomial w/ p=0.4 --> 0 if fish swim, 1 if they don't.
-  #  if they fail to swim, they get caught (caught)
-  #  add catches from swimming failure to catches from slowness
-  #  change that to a binomial:
-  #     if caught = 1 or 2, it's 1;
-  #     if caught = 0, it stays a 0.
-  fish2$caught <- fish2$caught + rbinom(n = length(fish2$caught),
-                                        size = 1,
-                                        prob = swim.fail)
-  fish2$caught <- as.numeric(fish2$caught > 0)
-  fish2$escaped <- as.numeric(fish2$caught == 0)
-  # fish2 <- cbind(fish2, time.diff) # I put the vars inside fish2 to start
-
-  return(fish2)
-}
-
-
-
 
 
 #' Summarizes the proportion of fish caught.
@@ -126,3 +44,81 @@ sumcatch <- function(fish, pop, n.fish){
   catch.p <- catch/n.fish
   return(cbind(pop, catch, catch.p))
 }
+
+
+
+
+#' Calculates which fish escape the net.
+#'
+#' @param fish A data.frame of fish information, created by mkfish
+#' @param pop A data.frame of tow information, created by mktow
+#' @param swim.fail Numeric [0, 1]. Proportion of fish that fail to swim.
+#' @return Returns the original fish data.frame with new columns for
+#' pop values, fish position, and caught status
+#' @examples
+#' escfish(fish3, tow3)
+escfish <- function(fish, pop, swim.fail = 0.4,
+                    width.path, height.path = width.path){
+
+
+
+  fish2 <- merge(fish, pop,
+                 by = "pop",
+                 all.x = TRUE)
+  # calculate the angle inside the triangle made by the fish's escape path,
+  #  the line perpendicular to the net boundary, and the net boundary itself
+  fish2$angle.prime <- adjustangle(fish2$angle)
+  # Define parameters:
+  y <- fish2$distance
+  z <- fish2$height
+  turn <- fish2$angle.prime
+  pitch <- fish2$angle.pitch
+  # Parameters to calculate:
+  # x = distance the fish travels relative to the movement direction of the net
+  #     x > 0 ==> moving away from the net; x < 0 ==> moving toward the net
+  # w = distance traveled by the fish (swimming distance to escape);
+  #     also the hypotenuse of the triangle on the turned vertical plane
+  # u = hypotenuse of the triangle on the horizontal plane
+  # s = distance the fish travels in the vertical direction to the edge of the net
+
+  # Assume fish escape out the side of the path of the net:
+  # Calculate the sides of the triangle on the horizontal plane:
+  u <- y * cos(turn)
+  x <- y * tan(turn)
+  # Calculate the sides of the triangle on the turned vertical plane:
+  w <- u / sin(pitch)
+  #s <- u / tan(pitch)
+
+  # Assume the fish escapes out the bottom of the path of the net:
+  wb <- z / cos(pitch)
+  ub <- tan(pitch) / z
+  xb <- ub * sin(turn)
+
+  # Does the fish escape to the side or the bottom?
+  side <- (u > y)
+
+  fish2 <- cbind(fish2, x, w, side)
+  # fish2$u[which(side == FALSE)] <- ub[which(side == FALSE)]
+  fish2$x[which(side == FALSE)] <- xb[which(side == FALSE)]
+  fish2$w[which(side == FALSE)] <- wb[which(side == FALSE)]
+  names(fish2)[12:14] <- c("x.dist", "swim.dist", "side")
+
+  # How long goes it take the fish to swim to safety?
+  fish2$esc.time <- fish2$swim.dist / fish2$fish.vel
+
+  # Where is the net when the fish escapes?
+  fish2$net.pos <- fish2$esc.time * fish2$net.vel
+
+  # The fish is caught if the net has moved past its escape position at the time when it reaches
+  #   the edge of the path of the net
+  fish2$caught <- as.numeric(fish2$net.pos > (fish2$rxn.dist + fish2$x.dist))
+
+  return(fish2)
+}
+#
+# test1 <- escfish2(fish3, tow3,
+#                   width.path = width.path,
+#                   height.path = width.path)
+# names(test1)
+
+
