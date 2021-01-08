@@ -1,0 +1,15 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+hex.png
+toy_fish.png
+yellowVblue.png
+*.pptx
+*.docx
+inst/doc
+inits*
+CODA*
+junk.R
+update_documentation.R

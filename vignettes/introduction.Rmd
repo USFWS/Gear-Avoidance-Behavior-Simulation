@@ -1,0 +1,69 @@
+---
+title: "Gear Avoidance Behavior Simulation (gabs)"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{introduction}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+# Some instructions:
+# https://kbroman.org/pkg_primer/pages/vignettes.html
+```
+
+```{r setup}
+library(gabs)
+```
+
+# Introduction
+
+This vignette is a work in progress. Suggestions are welcome. Check back for updates.
+
+In fisheries stock assessments, catch is thought of as a product of fishing effort 
+and the catchability and availability of the species at the fishing site 
+(Ricker 1975). Availability is defined as either the number or biomass of fish 
+present at a site and catchability describes the rate at  which fish are caught 
+relative to the true population size. In order to monitor changes in fish 
+populations monitoring programs use catch per unit of effort (CPUE) as an index.
+CPUE is proportional to the part of the population that is vulnerable to the 
+type of gear that is used in sampling; the vulnerable part of the population 
+is not necessarily the entire population (Maunder et al. 2006). This variable 
+catchability creates a problem for interpreting monitoring data because CPUE 
+values that are assumed to represent a fixed portion of the population represent 
+the combination of catchability and availability. There is no direct way to 
+separate these two effects in CPUE monitoring data without generating additional 
+information.
+
+There are methods to deal with varying catchability, such as calculating ratios 
+and fitting statistical models that allow environmental conditions or time variables 
+to account for changes in catchability (Maunder & Punt 2004). This package takes
+a different approach. By simulating the behavior of individual fish in response
+to approaching sampling gear, we can see the effects of varying catchability on
+a known number of available fish.
+
+A complete description of the formulas used in this package is documented in 
+this paper: https://doi.org/10.20944/preprints202002.0177.v1
+
+# Example
+Put an example here!
+
+
+# References
+
+Maunder MN, Sibert JR, Fonteneau A, Hampton J, Kleiber P, & Harley SJ (2006) 
+Interpreting catch per unit effort data to assess the status of individual stocks 
+and communities. ICES Journal of Marine Sciences 63:1373-1385. 
+DOI: 10.1016/j.icesjms.2006.05.008
+
+Maunder MN & Punt AE (2004) Standardizing catch and effort data: a review of 
+recent approaches. Fisheries Research 70:141-159. DOI: 10.1016/j.fishres.2004.08.002
+
+Ricker WE (1975) Computation and interpretation of biological statistics of fish 
+populations. Fisheries Research Board of Canada Bulletin 191.
+
